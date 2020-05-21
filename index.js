@@ -5,11 +5,10 @@ const fs = require('fs');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const sassMiddleware = require('node-sass-middleware');
+var bodyParser = require('body-parser');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('./assets'));
 
 app.use(expressLayouts);
 app.set('layout extractStyles', true);
@@ -22,6 +21,12 @@ app.use(sassMiddleware({
     outputStyle: 'extended',
     prefix: '/css'
 }))
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+
+app.use(express.static('./assets'));
 
 app.use('/', require('./routes/index'));
 

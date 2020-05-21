@@ -1,5 +1,4 @@
 body {
   background-color: lightblue; }
-
-#layout-main {
-  margin: 1rem; }
+  body #layout-main {
+    margin: 1rem; }
