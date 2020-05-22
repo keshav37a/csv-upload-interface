@@ -1,9 +1,10 @@
 console.log('home script called');
 let input = $('#search-box');
 let completeData = [];
-let allData = [];
+let currentData = [];
 let searchedData = [];
 let noOfPages = 0;
+let isAscending = true;
 
 //add click listener to all single-file-container objects
 $('.single-file-container').each((index, object)=>{
@@ -18,10 +19,11 @@ $('.single-file-container').each((index, object)=>{
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({'name': fileName}),          
             success: function(data) {
-                allData = data.data;
+                currentData = data.data;
                 completeData = data.data;
                 noOfPages = Math.floor(completeData.length/100); 
                 createTable(0);
+                
             }, error: function(err) {
                 console.log(err.responseText);
             }
@@ -31,17 +33,31 @@ $('.single-file-container').each((index, object)=>{
 
 let createHeadersRow = (singleRow)=>{
     let headers = [];
+    let headersSortText = [];
     Object.keys(singleRow).forEach((key)=>{
         headers.push(key);
     })
-    let tableRowTrBeg = '<tr id="table-headers">';
+
+    // <tr id="table-headers">
+    //     <div class="header-container">
+    //         <th>header</th>
+    //         <img class="sort-icon" src="https://image.flaticon.com/icons/svg/565/565620.svg" onclick="sort()"/>
+    //     </div>        
+    // </tr>
+
+    let tableRowTrBeg = '<tr class="table-headers">';
     let thRows = '';
-    for(let header of headers){
-        thRows += '<th>' + header + '</th>';
+    let thSortRows = '';
+    for(let i=0; i<headers.length; i++){
+        let header = headers[i];
+        thRows += '<th>' + header + '</th>' ;;
+        thSortRows += '<th>' + `<i class="fa fa-sort sort-icon" id=${header} aria-hidden="true"></i>` + '</th>';
     }
+    
     let tableRowTrEnd = '</tr>';
-    let headerRow = tableRowTrBeg + thRows + tableRowTrEnd;
-    return headerRow;
+    let headerRowOne = tableRowTrBeg + thRows + tableRowTrEnd;
+    let headerRowTwo = tableRowTrBeg + thSortRows + tableRowTrEnd;
+    return headerRowOne + headerRowTwo;
 }
 
 let createValuesRows = (allRowsData)=>{
@@ -66,13 +82,13 @@ let createTable = (index, data)=>{
     let hundredRowData = [];
     let pageCount = 0;
 
-    if(data==undefined && (allData.length==completeData.length)){
+    if(data==undefined && (currentData.length==completeData.length)){
         hundredRowData = pagination(index, completeData);
         pageCount = Math.floor((completeData.length)/100);
     }
     else{
-        hundredRowData = pagination(index, allData);
-        pageCount = Math.floor((allData.length)/100);
+        hundredRowData = pagination(index, currentData);
+        pageCount = Math.floor((currentData.length)/100);
     }
 
     // console.log(hundredRowData);
@@ -83,6 +99,11 @@ let createTable = (index, data)=>{
     $(fileContentContainer).empty();
     fileContentContainer.append(tableString);
     createPaginationLinks(pageCount);
+
+    $('.sort-icon').click((event)=>{
+        sortFunction(event.target.id);
+    })
+
 }
 
 //Creating paginated links
@@ -117,7 +138,7 @@ input.on('input', function(){
             foundData.push(object);
         }
     });
-    allData = foundData;
+    currentData = foundData;
     createTable(0, foundData);
 })
 
@@ -134,3 +155,25 @@ let pagination = (index, data) =>{
     }
     return paginatedData;
 }
+
+let sortFunction = (header)=>{
+    // console.log(currentData[0][header]);
+    for(let i=0; i<currentData.length; i++){
+        for(let j=0; j<currentData.length-1-i; j++){
+            if(isAscending && currentData[j][header]>currentData[j+1][header])
+                swapFunction(currentData, j, j+1);
+            else if(!isAscending && currentData[j][header]<currentData[j+1][header])
+                swapFunction(currentData, j+1, j);
+        }
+    }
+    console.log(currentData);
+    isAscending = !isAscending;
+    createTable(0, currentData);
+}
+
+let swapFunction = (array, i, j)=>{
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+

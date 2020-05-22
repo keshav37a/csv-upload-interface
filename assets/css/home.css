@@ -29,13 +29,22 @@
     #home-main #container #file-content-container {
       background-color: lightgreen;
       flex-grow: 1; }
-      #home-main #container #file-content-container th {
+      #home-main #container #file-content-container #file-table {
+        border-spacing: 10px; }
+      #home-main #container #file-content-container .sort-icon {
+        height: 1rem;
+        width: 1rem;
+        margin-left: 1rem; }
+      #home-main #container #file-content-container .header-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         margin: 1rem;
         padding: 0.5rem; }
       #home-main #container #file-content-container td {
         text-align: center;
         margin: 1rem;
-        padding: 0.5rem; }
+        padding: 1rem; }
       #home-main #container #file-content-container #pagination-container {
         display: flex;
         flex-direction: row;
