@@ -75,7 +75,7 @@ let createTable = (index, data)=>{
         pageCount = Math.floor((allData.length)/100);
     }
 
-    console.log(hundredRowData);
+    // console.log(hundredRowData);
     let valuesString = createValuesRows(hundredRowData);
     let tableString = tableStringBeg + headerString + valuesString + tableStringEnd;
 
@@ -100,7 +100,7 @@ let createPaginationLinks = (noOfPages)=>{
 
 //Front end search - Searching all columns
 input.on('input', function(){
-    console.log('oninput called');
+    // console.log('oninput called');
     let foundData = [];
     let text = input.val().toLowerCase();
     completeData.forEach((object)=>{
@@ -110,7 +110,7 @@ input.on('input', function(){
             // console.log(value);
             if(value.toLowerCase().includes(text)){
                 isContains = true;
-                console.log(value);
+                // console.log(value);
             }
         })
         if(isContains){

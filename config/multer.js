@@ -16,4 +16,16 @@ let storage = multer.diskStorage({
     }
   })
 
-module.exports.uploadedFile = multer({ storage: storage }).single('data-file');
+//backend validation check for csv file type
+module.exports.uploadedFile = multer({ storage: storage , fileFilter: (req, file, cb)=>{
+  let ext = path.extname(file.originalname);
+  console.log(ext);
+  if (file.mimetype === "application/vnd.ms-excel" && ext==='.csv') {
+    cb(null, true);
+  } 
+  else {
+    cb(null, false);
+    console.log('Only csv files allowed');
+    return cb(new Error('Only csv files allowed'));
+  }
+}}).single('data-file');

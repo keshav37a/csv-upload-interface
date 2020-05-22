@@ -10,7 +10,8 @@ module.exports.csvUpload = async (req, res)=>{
     
         MulterConfig.uploadedFile(req, res, async function(err){
             if(err) {console.log(`err: ${err}`); }
-    
+            
+            console.log(req.file);
             filePath += `${req.file.filename}`;
             console.log(filePath);
             let uploadedFile = await UploadedFile.create({path: filePath, type: type});
