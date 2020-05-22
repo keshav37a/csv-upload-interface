@@ -1,6 +1,8 @@
 console.log('home script called');
 let input = $('#search-box');
+let completeData = [];
 let allData = [];
+let searchedData = [];
 let noOfPages = 0;
 
 //add click listener to all single-file-container objects
@@ -17,10 +19,9 @@ $('.single-file-container').each((index, object)=>{
             data: JSON.stringify({'name': fileName}),          
             success: function(data) {
                 allData = data.data;
-                noOfPages = Math.floor(allData.length/100); 
-                console.log(noOfPages);
+                completeData = data.data;
+                noOfPages = Math.floor(completeData.length/100); 
                 createTable(0);
-
             }, error: function(err) {
                 console.log(err.responseText);
             }
@@ -58,18 +59,30 @@ let createValuesRows = (allRowsData)=>{
     return allRowsStr;
 }
 
-let createTable = (index)=>{
+let createTable = (index, data)=>{
     let tableStringBeg = '<table id="file-table" style="width:100%">';
     let tableStringEnd = '</table>';
-    let headerString = createHeadersRow(allData[0]);
-    let hundredRowData = pagination(index);
+    let headerString = createHeadersRow(completeData[0]);
+    let hundredRowData = [];
+    let pageCount = 0;
+
+    if(data==undefined && (allData.length==completeData.length)){
+        hundredRowData = pagination(index, completeData);
+        pageCount = Math.floor((completeData.length)/100);
+    }
+    else{
+        hundredRowData = pagination(index, allData);
+        pageCount = Math.floor((allData.length)/100);
+    }
+
+    console.log(hundredRowData);
     let valuesString = createValuesRows(hundredRowData);
     let tableString = tableStringBeg + headerString + valuesString + tableStringEnd;
 
     let fileContentContainer = $('#file-content-container');
     $(fileContentContainer).empty();
     fileContentContainer.append(tableString);
-    createPaginationLinks(noOfPages);
+    createPaginationLinks(pageCount);
 }
 
 //Creating paginated links
@@ -87,32 +100,37 @@ let createPaginationLinks = (noOfPages)=>{
 
 //Front end search - Searching all columns
 input.on('input', function(){
+    console.log('oninput called');
+    let foundData = [];
     let text = input.val().toLowerCase();
-    let allRows = $('.single-row');
-    allRows.each((index, row)=>{
+    completeData.forEach((object)=>{
+        // console.log(object);
         let isContains = false;
-        $('td', row).each(function() {
-            let tdContent = $(this).html().toLowerCase();
-            if(tdContent.includes(text)){
+        Object.entries(object).forEach(([key, value, array])=>{
+            // console.log(value);
+            if(value.toLowerCase().includes(text)){
                 isContains = true;
+                console.log(value);
             }
-        });
+        })
         if(isContains){
-            $(row).show();
-        }
-        else{
-            $(row).hide();
+            foundData.push(object);
         }
     });
+    allData = foundData;
+    createTable(0, foundData);
 })
 
 
 //For returning the 100 rows of data for a specified index
-let pagination = (index) =>{
+let pagination = (index, data) =>{
     let si = index*100;
     let paginatedData = [];
-    for(let i=si; i<(si+100); i++){
-        paginatedData.push(allData[i]);
+    for(let i=si; i<(si+100) && i<data.length; i++){
+        if(data==undefined)
+            paginatedData.push(completeData[i]);
+        else
+            paginatedData.push(data[i]);
     }
     return paginatedData;
 }
