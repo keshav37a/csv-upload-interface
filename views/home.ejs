@@ -1,6 +1,12 @@
 <link rel="stylesheet" href="/css/home.css">
 <div id="home-main">
     <h1>EJS Working. Called from home in uploads_controller</h1>
+    <div id="uploads-container">
+        <form action="/uploads/csv" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit" name="submit">
+        </form>
+    </div>
     <div id="container">
         <div id="file-list-container">
             <% for(let i=0; i<files.length; i++) {%>

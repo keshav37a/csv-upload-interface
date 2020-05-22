@@ -5,8 +5,6 @@ $(' .single-file-container').each((index, object)=>{
     console.log($(object));
     $(object).click(function (e) { 
         e.preventDefault();
-        // console.log($(object));
-        // let likeContainers = $(' .like-container', postOrCommentContainer);
         let sNoDivJQ = $('.sno', object);
         let fileName = sNoDivJQ.attr('id');
         console.log(fileName);
@@ -17,25 +15,17 @@ $(' .single-file-container').each((index, object)=>{
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({'name': fileName}),          
             success: function(data) {
-                // console.log(data);
-                let singleRow = data.data[0];
-                console.log(singleRow);
-                let headers = [];
-                Object.keys(singleRow).forEach((key)=>{
-                    headers.push(key);
-                })
-                console.log(headers);
                 let tableStringBeg = '<table style="width:100%">';
                 let tableStringEnd = '</table>';
-                let fileContentContainer = $('#file-content-container');
 
-                let headerString = createHeadersRow(headers);
-                let valuesString = createValuesRow(data.data);
+                let headerString = createHeadersRow(data.data[0]);
+                let valuesString = createValuesRows(data.data);
 
                 let tableString = tableStringBeg + headerString + valuesString + tableStringEnd;
+
+                let fileContentContainer = $('#file-content-container');
                 $(fileContentContainer).empty();
                 fileContentContainer.append(tableString);
-                console.log(tableString);
 
             }, error: function(err) {
                 console.log(err.responseText);
@@ -44,7 +34,11 @@ $(' .single-file-container').each((index, object)=>{
     });
 });
 
-createHeadersRow = (headers)=>{
+let createHeadersRow = (singleRow)=>{
+    let headers = [];
+    Object.keys(singleRow).forEach((key)=>{
+        headers.push(key);
+    })
     let tableRowTrBeg = '<tr id="table-headers">';
     let thRows = '';
     for(let header of headers){
@@ -55,8 +49,7 @@ createHeadersRow = (headers)=>{
     return headerRow;
 }
 
-createValuesRow = (allRowsData)=>{
-    // console.log(allRowsData);
+let createValuesRows = (allRowsData)=>{
     let allRowsStr = '';
     for(let singleRow of allRowsData){
         let tableRowTrBeg = '<tr class="single-row">';

@@ -1,5 +1,7 @@
 #home-main {
   background-color: lightgrey; }
+  #home-main #uploads-container {
+    margin: 1rem; }
   #home-main #container {
     display: flex;
     flex-direction: row;
