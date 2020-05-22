@@ -5,7 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const sassMiddleware = require('node-sass-middleware');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
+const db = require('./config/mongoose');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
