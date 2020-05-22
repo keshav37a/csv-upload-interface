@@ -43,8 +43,33 @@
             background-color: lightgreen;
             flex-grow: 1;
 
+            th{
+                margin: 1rem;
+                padding: 0.5rem;
+            }
+
             td{
                 text-align: center;
+                margin: 1rem;
+                padding: 0.5rem;
+            }
+            #pagination-container{
+                display: flex;
+                flex-direction: row;
+                justify-content: start;
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                margin-left: 2rem;
+
+                .pagination-index{
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    min-width: 1rem;
+                    background-color: transparent;
+                    border: 2px black solid;
+                    margin: 0.25rem;
+                    padding: auto;
+                }
             }
         }
         

@@ -29,5 +29,25 @@
     #home-main #container #file-content-container {
       background-color: lightgreen;
       flex-grow: 1; }
+      #home-main #container #file-content-container th {
+        margin: 1rem;
+        padding: 0.5rem; }
       #home-main #container #file-content-container td {
-        text-align: center; }
+        text-align: center;
+        margin: 1rem;
+        padding: 0.5rem; }
+      #home-main #container #file-content-container #pagination-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        margin-left: 2rem; }
+        #home-main #container #file-content-container #pagination-container .pagination-index {
+          cursor: pointer;
+          padding: 0.5rem;
+          min-width: 1rem;
+          background-color: transparent;
+          border: 2px black solid;
+          margin: 0.25rem;
+          padding: auto; }
