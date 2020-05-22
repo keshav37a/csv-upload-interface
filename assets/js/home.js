@@ -1,4 +1,5 @@
 console.log('home script called');
+let input = $('#search-box');
 
 //add click listener to all single-file-container objects
 $(' .single-file-container').each((index, object)=>{
@@ -15,7 +16,7 @@ $(' .single-file-container').each((index, object)=>{
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({'name': fileName}),          
             success: function(data) {
-                let tableStringBeg = '<table style="width:100%">';
+                let tableStringBeg = '<table id="file-table" style="width:100%">';
                 let tableStringEnd = '</table>';
 
                 let headerString = createHeadersRow(data.data[0]);
@@ -64,3 +65,25 @@ let createValuesRows = (allRowsData)=>{
     console.log(allRowsStr);
     return allRowsStr;
 }
+
+//Front end search
+input.on('input', function(){
+    let text = input.val().toLowerCase();
+    console.log(text);
+    let allRows = $('.single-row');
+    allRows.each((index, row)=>{
+        let isContains = false;
+        $('td', row).each(function() {
+            let tdContent = $(this).html().toLowerCase();
+            if(tdContent.includes(text)){
+                isContains = true;
+            }
+        });
+        if(isContains){
+            $(row).show();
+        }
+        else{
+            $(row).hide();
+        }
+    });
+})

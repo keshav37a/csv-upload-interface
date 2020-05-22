@@ -2,6 +2,9 @@
   background-color: lightgrey; }
   #home-main #uploads-container {
     margin: 1rem; }
+    #home-main #uploads-container #search-box {
+      margin-left: 1rem;
+      padding: 0.5rem; }
   #home-main #container {
     display: flex;
     flex-direction: row;
