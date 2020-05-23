@@ -13,7 +13,8 @@ function drawChart() {
     var data = google.visualization.arrayToDataTable(chartData);
 
     var options = {
-        title: chartData[0][0]
+        title: chartData[0][0],
+        backgroundColor: '#36D9BD'
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('piechart'));
