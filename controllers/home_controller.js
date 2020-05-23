@@ -4,20 +4,18 @@ const csvJson = require('csvjson');
 
 module.exports.home = async (req, res)=>{
     try{
-        console.log(`home in uploads_controller called`);
         let fileInfoArr = await getFilesList();
-        console.log('fileInfoArr: ', fileInfoArr);
         return res.render('home.ejs', {files: fileInfoArr});
     }
     catch(err){
         console.log(`err: ${err}`);
+        return res.send('<h1>Unexpected Error</h1>');
     }    
 }
 
+//Called after clicking on any item in the list of files shown
 module.exports.loadFileContent = async (req, res)=>{
     try{
-        console.log('req.body');
-        console.log(req.body);
         let reqFileName = req.body.name;
         let filePath = path.join(__dirname, '../uploads/csv');    
         let fileData = await fs.readFileSync(filePath+'\\'+reqFileName, 'utf8');
@@ -32,10 +30,9 @@ module.exports.loadFileContent = async (req, res)=>{
             data: 'no data'
         });
     }
-    
-    
 }
 
+//Getting the list of files from the uploads/csv directory
 const getFilesList = async ()=>{
     let filePath = path.join(__dirname, '../uploads/csv');    
     const files = await fs.readdirSync(filePath);

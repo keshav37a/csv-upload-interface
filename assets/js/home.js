@@ -1,32 +1,35 @@
 console.log('home script called');
 let input = $('#search-box');
-let completeData = [];
-let currentData = [];
+let completeData = []; //All rows for that file. unchanged during the runtime
+let currentData = []; //Current rows of the file. Can change due to sorting or searching
 let noOfPages = 0;
-let isAscending = true;
-let chartData = [];
+let isAscending = true; //boolean check for toggling between ascending and descending sort
+let chartData = []; //populated only when click event on chart icon happens
 
 //charts
 
 
 function drawChart() {
-    var data = google.visualization.arrayToDataTable(chartData);
+    let data = google.visualization.arrayToDataTable(chartData);
 
-    var options = {
+    let options = {
         title: chartData[0][0],
         backgroundColor: '#36D9BD'
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    let chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
     chart.draw(data, options);
 }
+
 //add click listener to all single-file-container objects
 $('.single-file-container').each((index, object)=>{
     $(object).click(function (e) { 
         e.preventDefault();
         let sNoDivJQ = $('.sno', object);
         let fileName = sNoDivJQ.attr('id');
+
+        //this gives us all the rows and columns in json format
         $.ajax({
             type: "post",
             url: `/load-content`,
@@ -46,9 +49,9 @@ $('.single-file-container').each((index, object)=>{
     });
 });
 
+//function for creating header rows (column names, sort icons and chart icons)
 let createHeadersRow = (singleRow)=>{
     let headers = [];
-    let headersSortText = [];
     Object.keys(singleRow).forEach((key)=>{
         headers.push(key);
     })
@@ -56,21 +59,19 @@ let createHeadersRow = (singleRow)=>{
     let tableRowTrBeg = '<tr class="table-headers">';
     let thRows = '';
     let thSortRows = '';
-    let thShowCharts = '';
     for(let i=0; i<headers.length; i++){
         let header = headers[i];
         thRows += '<th>' + header + '</th>' ;;
         thSortRows += '<th>' + `<i class="fa fa-sort sort-icon" id=${header} aria-hidden="true"></i>` + `<i class="fa fa-bar-chart chart-icon" id=${header} aria-hidden="true"></i>` +'</th>';
-        thShowCharts += '<th>' +  + '</th>';
     }
     
     let tableRowTrEnd = '</tr>';
     let headerRowOne = tableRowTrBeg + thRows + tableRowTrEnd;
     let headerRowTwo = tableRowTrBeg + thSortRows + tableRowTrEnd;
-    // let headerRowThree = tableRowTrBeg + thShowCharts + tableRowTrEnd;
     return headerRowOne + headerRowTwo;
 }
 
+// For creating rows with values below the header rows
 let createValuesRows = (allRowsData)=>{
     let allRowsStr = '';
     for(let singleRow of allRowsData){
@@ -86,6 +87,7 @@ let createValuesRows = (allRowsData)=>{
     return allRowsStr;
 }
 
+//For creating the table. createHeaderRows called from here. Also pagination called from here
 let createTable = (index, data)=>{
     let tableStringBeg = '<table id="file-table" style="width:100%">';
     let tableStringEnd = '</table>';
@@ -110,6 +112,7 @@ let createTable = (index, data)=>{
     fileContentContainer.append(tableString);
     createPaginationLinks(pageCount);
 
+    //Adding click events to icons after the table is populated
     $('.sort-icon').click((event)=>{
         sortFunction(event.target.id);
     });
@@ -166,8 +169,8 @@ let pagination = (index, data) =>{
     return paginatedData;
 }
 
+//For sorting the data based on column content 
 let sortFunction = (header)=>{
-    console.log("sort called");
     console.log(currentData.length);
     currentData.sort(getSortOrder(header));
     console.log(currentData);
@@ -184,6 +187,7 @@ let getSortOrder = (prop) => {
         let floatData1 = parseFloat(data1);
         let floatData2 = parseFloat(data2);
 
+        //Added check for number. If yes then to sort it as a number and not as a string
         if(!isNaN(floatData1) && !isNaN(floatData2)){
             data1 = floatData1;
             data2 = floatData2;
@@ -211,6 +215,7 @@ let getSortOrder = (prop) => {
     }    
 } 
 
+//Called after onclick event of chart icon. populates the chart and displays it
 let chartFunction = (prop)=>{
     console.log('chart func called on ' + prop);
     let array = [];
@@ -225,13 +230,11 @@ let chartFunction = (prop)=>{
     array.push([prop, 'count']);
     Object.entries(obj).forEach(([key, value, index])=>{
         let singleArr = [];
-        // console.log(`${key}: ${value}`);
         singleArr.push(key);
         singleArr.push(value);
         array.push(singleArr);
     })
 
-    console.log(array);
     chartData = array;
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
