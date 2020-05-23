@@ -157,19 +157,58 @@ let pagination = (index, data) =>{
 }
 
 let sortFunction = (header)=>{
-    // console.log(currentData[0][header]);
-    for(let i=0; i<currentData.length; i++){
-        for(let j=0; j<currentData.length-1-i; j++){
-            if(isAscending && currentData[j][header]>currentData[j+1][header])
-                swapFunction(currentData, j, j+1);
-            else if(!isAscending && currentData[j][header]<currentData[j+1][header])
-                swapFunction(currentData, j+1, j);
-        }
-    }
+    console.log("sort called");
+    console.log(currentData.length);
+    currentData.sort(getSortOrder(header));
+    // for(let i=0; i<currentData.length; i++){
+    //     for(let j=0; j<currentData.length-1-i; j++){
+    //         console.log(`comparing`);
+    //         if(isAscending && currentData[j][header]>currentData[j+1][header])
+    //             swapFunction(currentData, j, j+1);
+    //         else if(!isAscending && currentData[j][header]<currentData[j+1][header])
+    //             swapFunction(currentData, j+1, j);
+    //     }
+    // }
     console.log(currentData);
+    console.log(isAscending);
     isAscending = !isAscending;
     createTable(0, currentData);
 }
+
+let getSortOrder = (prop) => {    
+    return (a, b)=> {
+        let data1 = a[prop];
+        let data2 = b[prop];
+        
+        let floatData1 = parseFloat(data1);
+        let floatData2 = parseFloat(data2);
+
+        if(!isNaN(floatData1) && !isNaN(floatData2)){
+            data1 = floatData1;
+            data2 = floatData2;
+            
+        }
+        if(isAscending){
+            if (data1 > data2) {    
+                return 1;    
+            } 
+            else if (data1 < data2) 
+            {    
+                return -1;    
+            }    
+        }
+        else{
+            if (data1 > data2) {    
+                return -1;    
+            } 
+            else if (data1 < data2) 
+            {    
+                return 1;    
+            }    
+        }
+        return 0;    
+    }    
+} 
 
 let swapFunction = (array, i, j)=>{
     let temp = array[i];
