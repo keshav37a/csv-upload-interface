@@ -2,10 +2,24 @@ console.log('home script called');
 let input = $('#search-box');
 let completeData = [];
 let currentData = [];
-let searchedData = [];
 let noOfPages = 0;
 let isAscending = true;
+let chartData = [];
 
+//charts
+
+
+function drawChart() {
+    var data = google.visualization.arrayToDataTable(chartData);
+
+    var options = {
+        title: chartData[0][0]
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    chart.draw(data, options);
+}
 //add click listener to all single-file-container objects
 $('.single-file-container').each((index, object)=>{
     $(object).click(function (e) { 
@@ -38,25 +52,21 @@ let createHeadersRow = (singleRow)=>{
         headers.push(key);
     })
 
-    // <tr id="table-headers">
-    //     <div class="header-container">
-    //         <th>header</th>
-    //         <img class="sort-icon" src="https://image.flaticon.com/icons/svg/565/565620.svg" onclick="sort()"/>
-    //     </div>        
-    // </tr>
-
     let tableRowTrBeg = '<tr class="table-headers">';
     let thRows = '';
     let thSortRows = '';
+    let thShowCharts = '';
     for(let i=0; i<headers.length; i++){
         let header = headers[i];
         thRows += '<th>' + header + '</th>' ;;
-        thSortRows += '<th>' + `<i class="fa fa-sort sort-icon" id=${header} aria-hidden="true"></i>` + '</th>';
+        thSortRows += '<th>' + `<i class="fa fa-sort sort-icon" id=${header} aria-hidden="true"></i>` + `<i class="fa fa-bar-chart chart-icon" id=${header} aria-hidden="true"></i>` +'</th>';
+        thShowCharts += '<th>' +  + '</th>';
     }
     
     let tableRowTrEnd = '</tr>';
     let headerRowOne = tableRowTrBeg + thRows + tableRowTrEnd;
     let headerRowTwo = tableRowTrBeg + thSortRows + tableRowTrEnd;
+    // let headerRowThree = tableRowTrBeg + thShowCharts + tableRowTrEnd;
     return headerRowOne + headerRowTwo;
 }
 
@@ -91,7 +101,6 @@ let createTable = (index, data)=>{
         pageCount = Math.floor((currentData.length)/100);
     }
 
-    // console.log(hundredRowData);
     let valuesString = createValuesRows(hundredRowData);
     let tableString = tableStringBeg + headerString + valuesString + tableStringEnd;
 
@@ -102,6 +111,10 @@ let createTable = (index, data)=>{
 
     $('.sort-icon').click((event)=>{
         sortFunction(event.target.id);
+    });
+
+    $('.chart-icon').click((event)=>{
+        chartFunction(event.target.id);
     })
 
 }
@@ -121,17 +134,13 @@ let createPaginationLinks = (noOfPages)=>{
 
 //Front end search - Searching all columns
 input.on('input', function(){
-    // console.log('oninput called');
     let foundData = [];
     let text = input.val().toLowerCase();
     completeData.forEach((object)=>{
-        // console.log(object);
         let isContains = false;
         Object.entries(object).forEach(([key, value, array])=>{
-            // console.log(value);
             if(value.toLowerCase().includes(text)){
                 isContains = true;
-                // console.log(value);
             }
         })
         if(isContains){
@@ -160,15 +169,6 @@ let sortFunction = (header)=>{
     console.log("sort called");
     console.log(currentData.length);
     currentData.sort(getSortOrder(header));
-    // for(let i=0; i<currentData.length; i++){
-    //     for(let j=0; j<currentData.length-1-i; j++){
-    //         console.log(`comparing`);
-    //         if(isAscending && currentData[j][header]>currentData[j+1][header])
-    //             swapFunction(currentData, j, j+1);
-    //         else if(!isAscending && currentData[j][header]<currentData[j+1][header])
-    //             swapFunction(currentData, j+1, j);
-    //     }
-    // }
     console.log(currentData);
     console.log(isAscending);
     isAscending = !isAscending;
@@ -210,9 +210,29 @@ let getSortOrder = (prop) => {
     }    
 } 
 
-let swapFunction = (array, i, j)=>{
-    let temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
+let chartFunction = (prop)=>{
+    console.log('chart func called on ' + prop);
+    let array = [];
+    let obj = {};
+    for(let i=0; i<currentData.length; i++){
+        let key = currentData[i][prop];
+        if(obj[key]==undefined)
+            obj[key] = 1;
+        else
+            obj[key] = obj[key]+1;
+    }
+    array.push([prop, 'count']);
+    Object.entries(obj).forEach(([key, value, index])=>{
+        let singleArr = [];
+        // console.log(`${key}: ${value}`);
+        singleArr.push(key);
+        singleArr.push(value);
+        array.push(singleArr);
+    })
+
+    console.log(array);
+    chartData = array;
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
 }
 
