@@ -31,3 +31,7 @@ This project has the following features-
 * Searching of Data for all columns
 * Google charts integration
 * Display pie charts for all columns (more charts will be added soon)
+
+## Project Demo
+
+`https://drive.google.com/file/d/1iERtQdLxOhNeZM9X1mgnsNM6IJIm-EEN/view?usp=sharing`

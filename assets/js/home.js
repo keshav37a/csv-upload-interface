@@ -6,9 +6,6 @@ let noOfPages = 0;
 let isAscending = true; //boolean check for toggling between ascending and descending sort
 let chartData = []; //populated only when click event on chart icon happens
 
-//charts
-
-
 function drawChart() {
     let data = google.visualization.arrayToDataTable(chartData);
 
